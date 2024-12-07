@@ -1,0 +1,85 @@
+* komb
+A tiny Babashka utility for sorting JSON.
+It reads JSON content, sorts object keys and (array) values alphanumerically and pretty-prints the result.
+
+** Motivation
+I was searching for an offline tool, but only thing I've found was [[https://github.com/ShivrajRath/jsonabc][jsonabc]].
+This utility does almost the same but it's implemented using a sane language =)
+
+This tool is designed to work with files on a local filesystem.
+It can also read JSON from ~stdin~ for piping. See usage examples down below.
+
+** Prerequisites
+*** Install runtime
+Make sure you've [[https://github.com/babashka/babashka#installation][installed babashka]].
+You probably also will need Java, cause Babashka uses Java-based tools for dependency management.
+
+*** Clone the repository
+#+begin_src shell
+git clone git@github.com:and-z/komb.git
+cd komb
+#+end_src
+
+Assume executing following commands from the local project directory.
+
+*** (Optional) Install using ~bbin~ to local path
+The most convenient way to use this utility is to install it as a tool using [[https://github.com/babashka/bbin/?tab=readme-ov-file#installation][bbin]].
+
+With ~bbin~ in place you can install ~komb~ from the local git repository:
+#+begin_src shell
+bb install
+#+end_src
+
+It's also easily uninstalled with:
+#+begin_src shell
+bb uninstall
+#+end_src
+
+Make sure to uninstall old version before installing a more recent one.
+
+Tip: List available tasks with ~bb tasks~.
+
+*** (Optional) Use as Babashka task
+It's also possible to use this utility without installation. The API should be consistent.
+
+**** List available tasks
+#+begin_src shell
+bb tasks
+#+end_src
+
+**** Sort some JSON file using Babashka task
+#+begin_src shell
+bb komb test/it/zimpel/komb/unsorted.json
+#+end_src
+
+**** Sort some JSON from ~stdin~ using Babashka task
+#+begin_src shell
+cat test/it/zimpel/komb/unsorted.json | bb komb
+#+end_src
+
+** Usage (installed)
+Once ~komb~ is on your path it can be executed providing a path to a JSON file:
+
+#+begin_src shell
+komb test/it/zimpel/komb/unsorted.json
+#+end_src
+
+If no file is provided ~komb~ reads JSON content from ~stdin~:
+
+#+begin_src shell
+cat test/it/zimpel/komb/unsorted.json | komb
+#+end_src
+
+Use following to get some more help:
+#+begin_src shell
+komb --help
+#+end_src
+
+** Development
+It is possible to start a standard Clojure or Babashka REPL to play with source code.
+Nothing special to mention here.
+
+*** Run tests
+#+begin_src shell
+bb test:bb
+#+end_src

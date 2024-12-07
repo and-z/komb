@@ -1,0 +1,30 @@
+{:paths ["src" "dev"]
+ :deps {local/project {:local/root "."}}
+
+ :bbin/bin
+ {komb {:main-opts ["-m" "it.zimpel.komb.main/-main"]}}
+
+ :tasks
+ {:requires ([cheshire.core :as json]
+             [clojure.pprint :as pp]
+             [it.zimpel.komb.main :as komb])
+
+  ;; e.g.: bb komb $(find <dir-containing-json-files> | fzf)
+  ;; cat test/it/zimpel/komb/unsorted.json | bb komb
+  komb {:doc "Sort keys and values of provided file and print it. Use `komb -h` for more help."
+        :task komb/-main}
+
+  install {:doc "Install `komb` utility using `bbin`"
+           :task (shell "bbin install ./.")}
+
+  uninstall {:doc "Uninstall this utility"
+             :task (shell "bbin uninstall komb")}
+
+  test:bb {:doc "Run tests"
+           :task (exec 'cognitect.test-runner.api/test)
+           :extra-paths ["test"]
+           :extra-deps {io.github.cognitect-labs/test-runner
+                        {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
+           :exec-args {:dirs ["test"]}
+           :org.babashka/cli {:coerce {:nses [:symbol]
+                                       :vars [:symbol]}}}}}
