@@ -2,10 +2,7 @@
   (:require
    [cheshire.core :as json]
    [clojure.java.io :as io]
-   [clojure.string :as str]
-   [clojure.walk :as walk])
-  (:import
-   (java.io File)))
+   [clojure.walk :as walk]))
 
 (set! *warn-on-reflection* true)
 
@@ -15,7 +12,7 @@
    #(every? string? %)
    #(every? keyword? %)))
 
-(defn sort-json [data]
+(defn sort-json [data {:keys [semantic?]}]
   (walk/prewalk
    (fn [form]
      (cond
@@ -26,40 +23,23 @@
        ;; - subtree MapEntry [:foo <some-children>]
        ;; - heterogeneous values
        (and (sequential? form)
-            (sortable? form))
+            (sortable? form)
+            (not semantic?))
        (into [] (sort form))
 
        :else form))
    data))
 
-(defn sort-json-str [input]
+(defn sort-json-str [options input]
   (-> (json/parse-string input true)
-      (sort-json)))
+      (sort-json options)))
 
-(defn get-json-file [path]
-  (let [^File file (io/file path)
-        ->error (fn [msg] {:error {:message msg :path path}})]
-    (cond
-      (not (.exists file))
-      (->error "File not exists")
+(defn process-from-file [options file]
+  (sort-json-str options (slurp file)))
 
-      (not (.isFile file))
-      (->error "Not a file")
-
-      (not (str/ends-with? (.getName file) ".json"))
-      (->error "Not a JSON file")
-
-      (not (.canRead file))
-      (->error "File not readable")
-
-      :else {:file file})))
-
-(defn process-from-file [path]
-  (let [{:keys [error file] :as result} (get-json-file path)]
-    (if (some? error)
-      result
-      {:data (sort-json-str (slurp file))})))
-
-(defn process-from-input []
+(defn process-from-input [options]
   (with-open [r (io/reader *in*)]
-    {:data (sort-json-str (slurp r))}))
+    (sort-json-str options (slurp r))))
+
+(defn stringify [json options]
+  (json/generate-string json options))
