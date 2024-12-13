@@ -1,6 +1,5 @@
 (ns it.zimpel.komb.main
   (:require
-   [cheshire.core :as json]
    [it.zimpel.komb.cli :as cli]
    [it.zimpel.komb.core :as core]))
 

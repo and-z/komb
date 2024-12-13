@@ -4,15 +4,47 @@ It reads JSON content, sorts object keys and (array) values alphanumerically and
 
 ** Motivation
 I was searching for an offline tool, but only thing I've found was [[https://github.com/ShivrajRath/jsonabc][jsonabc]].
-This utility does almost the same but it's implemented using a sane language =)
+This utility does almost the same but it's implemented using a [[https://clojure.org/][sane language]] 😃.
 
-This tool is designed to work with files on a local filesystem.
-It can also read JSON from ~stdin~ for piping. See usage examples down below.
+This tool reads JSON from a file or from ~stdin~ if no argument provided.
+By default it will sort semantically, keeping order of array elements as is and pretty-print the result.
+
+The basic idea was to have a handy tool to compare JSON files.
+With additional CLI options it's also possible to sort JSON files without loosing semantic order.
+
+~komb~ uses proper shell exit codes to communicate successful or failed execution.
+
+See usage examples down below.
+
+** Command Line Interface
+#+begin_src shell :results drawer :wrap example :exports both
+komb --help
+#+end_src
+
+#+RESULTS:
+#+begin_example shell
+komb - sort JSON & pretty-print
+
+Usage: komb [options] [path]
+
+Reads content of a JSON file from *stdin* if no path provided.
+
+Options:
+      --[no-]semantic  true  Enable to preserve order of array elements
+      --[no-]pretty    true  Pretty-print the result
+  -h, --help                 Print this help.
+
+Arguments:
+  path - path to JSON file
+#+end_example
 
 ** Prerequisites
 *** Install runtime
-Make sure you've [[https://github.com/babashka/babashka#installation][installed babashka]].
+Make sure you've installed [[https://babashka.org/][Babashka]].
 You probably also will need Java, cause Babashka uses Java-based tools for dependency management.
+
+By the way [[https://asdf-vm.com/][asdf]] is a nice tool to manage different tools/runtimes.
+It also supports both beforementioned runtimes.
 
 *** Clone the repository
 #+begin_src shell
@@ -57,9 +89,10 @@ bb komb test/it/zimpel/komb/unsorted.json
 cat test/it/zimpel/komb/unsorted.json | bb komb
 #+end_src
 
-** Usage (installed)
+** Usage examples (installed)
 Once ~komb~ is on your path it can be executed providing a path to a JSON file:
 
+Sort using default behaviour:
 #+begin_src shell
 komb test/it/zimpel/komb/unsorted.json
 #+end_src
@@ -70,10 +103,60 @@ If no file is provided ~komb~ reads JSON content from ~stdin~:
 cat test/it/zimpel/komb/unsorted.json | komb
 #+end_src
 
-Use following to get some more help:
-#+begin_src shell
-komb --help
+Sometimes it's handy to sort everything, e.g. to compare JSON payloads visually:
+#+begin_src shell :results drawer :wrap example :exports both
+cat <<'JSON' | komb --no-semantic --no-pretty
+{
+  "a": [99,3,4,22,33,99]
+}
+JSON
 #+end_src
+
+Output:
+#+RESULTS:
+#+begin_example json
+{"a":[3,4,22,33,99,99]}
+#+end_example
+
+** Use ~komb~ with code editor (Emacs/Spacemacs/etc)
+Having a programmable editor is actually pretty nice. I'm not an Emacs specialist at all, but with some
+guidance from the excellent article [[https://www.masteringemacs.org/article/executing-shell-commands-emacs]["Executing Shell Commands in Emacs"]] by Mickey Petersen
+I was able to easily embed ~komb~ into my workflow.
+In this example I'm using Spacemacs but the idea should be transferrable to other editors as well.
+
+I've defined my custom elisp function like shown below:
+#+begin_src elisp
+(defun sort-json ()
+  "Sorts and pretty-prints JSON using `komb` Babashka tool"
+  (interactive)
+  (shell-command-on-region
+   ;; beginning and end of buffer
+   (point-min)
+   (point-max)
+   ;; command and param
+   "komb"
+   ;; output buffer
+   (current-buffer)
+   ;; replace?
+   t
+   ;; name of the error buffer
+   "*komb Error Buffer*"
+   ;; show error buffer
+   t))
+#+end_src
+
+For more convenience I've also defined a custom key binding for JSON major mode:
+#+begin_src elisp
+(defun dotspacemacs/user-config()
+  ; some existing user configuration
+  ; ...
+  (spacemacs/set-leader-keys-for-major-mode 'json-mode "o=" 'sort-json)
+#+end_src
+
+With this small adjustments in place sorting JSON files became a breeze:
+- Open unsorted JSON file in Emacs buffer
+- Press ~, o =~
+- Profit
 
 ** Development
 It is possible to start a standard Clojure or Babashka REPL to play with source code.

@@ -30,7 +30,7 @@
       (help? result)))
 
 (defn usage [{:keys [summary errors]}]
-  (into ["komb - sort (nested) JSON & pretty-print
+  (into ["komb - sort JSON & pretty-print
 
 Usage: komb [options] [path]
 
