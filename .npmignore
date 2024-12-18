@@ -1,0 +1,7 @@
+.clj-kondo/
+.cpcache/
+.lsp/
+.standard-clj.edn
+bb.edn
+dev/
+test/

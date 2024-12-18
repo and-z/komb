@@ -2,9 +2,18 @@
 A tiny Babashka utility for sorting JSON.
 It reads JSON content, sorts object keys and (array) values alphanumerically and pretty-prints the result.
 
+** Features
+- Sorts nested JSON objects and arrays
+- Reads JSON from a file or from ~stdin~
+- Optional semantic sort preserves order of array elements
+- Optional pretty-printing
+- Runs locally/offline by Node.js or GraalVM
+- Returns bash exit code on success/error
+
 ** Motivation
 I was searching for an offline tool, but only thing I've found was [[https://github.com/ShivrajRath/jsonabc][jsonabc]].
 This utility does almost the same but it's implemented using a [[https://clojure.org/][sane language]] 😃.
+It also fixes some issues of ~jsonabc~ like sorting numbers.
 
 This tool reads JSON from a file or from ~stdin~ if no argument provided.
 By default it will sort semantically, keeping order of array elements as is and pretty-print the result.
@@ -38,15 +47,51 @@ Arguments:
   path - path to JSON file
 #+end_example
 
-** Prerequisites
-*** Install runtime
+** Installation
+`komb` supports two different runtimes: Native GraalVM and Node.js.
+The user can decide which flavor suits better.
+
+*** Run on Node.js
+Any modern Node.js version should be sufficient.
+Ensure `node/npm/npx` are available before proceed next.
+`komb` is written using Clojure and it brings `nbb` as a dependency to interpret code with it,
+so no additional libraries besides Node.js itself are required.
+
+Try `komb` out without installation via
+#+begin_src shell
+npx komb some-json-file.json
+
+# or provide JSON directly
+cat <<'JSON' | npx komb --no-semantic
+{
+  "alias": "bb",
+  "full-name": "Babashka",
+  "author": "borkdude",
+  "unordered-numbers": [2, 5, 1, 2, 9]
+}
+JSON
+#+end_src
+
+or install it from public `NPM`.
+#+begin_src shell
+npm install komb
+#+end_src
+
+Verify installation succeeded:
+#+begin_src shell
+komb --help
+#+end_src
+
+Please note this utility has no JS interface and therefore it cannot be used from JS code as a library.
+
+*** Run on GraalVM
+This scenario is probably for Clojure (savvy) people.
+Currently there is no pre-build binary available for this tool, but it can be installed from source.
+
 Make sure you've installed [[https://babashka.org/][Babashka]].
-You probably also will need Java, cause Babashka uses Java-based tools for dependency management.
+You probably also will need a recent Java, cause Babashka uses Java-based tools for dependency management.
 
-By the way [[https://asdf-vm.com/][asdf]] is a nice tool to manage different tools/runtimes.
-It also supports both beforementioned runtimes.
-
-*** Clone the repository
+**** Clone the repository
 #+begin_src shell
 git clone git@github.com:and-z/komb.git
 cd komb
@@ -54,7 +99,7 @@ cd komb
 
 Assume executing following commands from the local project directory.
 
-*** (Optional) Install using ~bbin~ to local path
+**** (Optional) Install using ~bbin~ to local path
 The most convenient way to use this utility is to install it as a tool using [[https://github.com/babashka/bbin/?tab=readme-ov-file#installation][bbin]].
 
 With ~bbin~ in place you can install ~komb~ from the local git repository:
@@ -71,25 +116,25 @@ Make sure to uninstall old version before installing a more recent one.
 
 Tip: List available tasks with ~bb tasks~.
 
-*** (Optional) Use as Babashka task
+**** (Optional) Use as Babashka task
 It's also possible to use this utility without installation. The API should be consistent.
 
-**** List available tasks
+***** List available tasks
 #+begin_src shell
 bb tasks
 #+end_src
 
-**** Sort some JSON file using Babashka task
+***** Sort some JSON file using Babashka task
 #+begin_src shell
 bb komb test/it/zimpel/komb/unsorted.json
 #+end_src
 
-**** Sort some JSON from ~stdin~ using Babashka task
+***** Sort some JSON from ~stdin~ using Babashka task
 #+begin_src shell
 cat test/it/zimpel/komb/unsorted.json | bb komb
 #+end_src
 
-** Usage examples (installed)
+** Usage examples
 Once ~komb~ is on your path it can be executed providing a path to a JSON file:
 
 Sort using default behaviour:
@@ -103,7 +148,7 @@ If no file is provided ~komb~ reads JSON content from ~stdin~:
 cat test/it/zimpel/komb/unsorted.json | komb
 #+end_src
 
-Sometimes it's handy to sort everything, e.g. to compare JSON payloads visually:
+Sometimes it's handy to sort everything (including arrays), e.g. to compare JSON payloads visually:
 #+begin_src shell :results drawer :wrap example :exports both
 cat <<'JSON' | komb --no-semantic --no-pretty
 {
@@ -159,10 +204,27 @@ With this small adjustments in place sorting JSON files became a breeze:
 - Profit
 
 ** Development
-It is possible to start a standard Clojure or Babashka REPL to play with source code.
+It is possible to start a standard Clojure, Babashka or nbb REPL to play with source code.
 Nothing special to mention here.
 
 *** Run tests
 #+begin_src shell
 bb test:bb
 #+end_src
+
+** Startup time
+Here are some numbers (in descencing order) to give an idea of how quick/slow different versions may run.
+The measurements are not scientific and don't pretent to be a valid benchmark.
+I executed different variants of starting `komb` and wrapped the commands with `time` on my linux dev machine.
+
+| runtime | note          | cmd                                                                          | time <cmd>                                   |
+|---------+---------------+------------------------------------------------------------------------------+----------------------------------------------|
+| nodejs  | not installed | npx komb test/it/zimpel/komb/unsorted.json                                   | 0,37s user 0,05s system 72% cpu 0,581 total  |
+| nodejs  | not installed | npx nbb -m it.zimpel.komb.main test/it/zimpel/komb/unsorted.json             | 0,27s user 0,08s system 132% cpu 0,262 total |
+| nodejs  | not installed | nbb --classpath src -m it.zimpel.komb.main test/it/zimpel/komb/unsorted.json | 0,15s user 0,02s system 131% cpu 0,127 total |
+| nodejs  | `npm -i komb` | komb test/it/zimpel/komb/unsorted.json                                       | 0,14s user 0,03s system 132% cpu 0,128 total |
+| graalvm | not installed | bb komb test/it/zimpel/komb/unsorted.json                                    | 0,01s user 0,02s system 90% cpu 0,029 total  |
+| graalvm | `bb install`  | komb test/it/zimpel/komb/unsorted.json                                       | 0,01s user 0,03s system 94% cpu 0,040 total  |
+
+`not installed` means `komb` is not installed as a tool via `npm install` for Node.js flavor or `bb install` for GraalVM flavor.
+When properly installed there is no performance penalty for dynamic lookup like in case of `npx`.

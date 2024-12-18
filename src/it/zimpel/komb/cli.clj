@@ -1,11 +1,8 @@
 (ns it.zimpel.komb.cli
   (:require
-   [clojure.java.io :as io]
    [clojure.string :as str]
-   [clojure.tools.cli :as cli])
-  (:import (java.io File)))
-
-(set! *warn-on-reflection* true)
+   [clojure.tools.cli :as cli]
+   [it.zimpel.komb.io :as io]))
 
 (def cli-spec
   [[nil "--[no-]semantic" "Enable to preserve order of array elements"
@@ -16,8 +13,8 @@
 
 (defn pr-errors [errors]
   (->> errors
-       (map (partial str "- "))
-       (str/join \newline)))
+    (map (partial str "- "))
+    (str/join \newline)))
 
 (defn error? [{:keys [errors]}]
   (seq errors))
@@ -44,31 +41,12 @@ Arguments:
         (when (seq errors)
           ["" "Errors:" (pr-errors errors)])))
 
-(defn valid-json-file [path]
-  (let [^File file (io/file path)
-        ->error (fn [msg anomaly] {:error {:message msg :path path}
-                                  :anomaly anomaly})]
-    (cond
-      (not (.exists file))
-      (->error "File not exists" :file/missing)
-
-      (not (.isFile file))
-      (->error "Not a file" :file/not-a-file)
-
-      (not (str/ends-with? (.getName file) ".json"))
-      (->error "Not a JSON file" :file/unexpected-type)
-
-      (not (.canRead file))
-      (->error "File not readable" :file/access)
-
-      :else {:file file})))
-
 (defn to-str [{:keys [message path]}]
-  (format "%s: '%s'" message path))
+  (str message ": '" path "'"))
 
 (defn parse-arguments [{:keys [arguments] :as result}]
   (let [[path & unexpected] arguments
-        {:keys [file error]} (some-> path (valid-json-file))]
+        {:keys [file error]} (some-> path (io/valid-json-file))]
     (cond
       (seq unexpected)
       (update result :errors (fnil conj []) "Single path argument expected")
@@ -82,11 +60,8 @@ Arguments:
       :else result)))
 
 (defn parse-opts [args]
-  (let [result (-> (cli/parse-opts args cli-spec)
-                   (parse-arguments))]
-    #_(when (abort? result)
-      (run! println (usage result)))
-    result))
+  (-> (cli/parse-opts args cli-spec)
+      (parse-arguments)))
 
 (comment
 
@@ -98,5 +73,4 @@ Arguments:
         #_["--no-semantic" "-h"]]
     (parse-opts args))
 
-  \n
-  )
+  \n)
