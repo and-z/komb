@@ -1,8 +1,9 @@
 (ns scratch
-  (:require [cheshire.core :as json]
-            [clojure.walk :as walk]
-            [clojure.pprint :as pp]
-            [it.zimpel.komb.core :as komb]))
+  (:require
+   [cheshire.core :as json]
+   [clojure.pprint :as pp]
+   [clojure.walk :as walk]
+   [it.zimpel.komb.core :as komb]))
 
 (def json-str
   "
@@ -31,13 +32,11 @@
   ]
 }")
 
-
 (comment
 
   (-> (json/parse-string json-str true)
       (komb/sort-json)
       (pp/pprint))
-
 
   (-> (json/parse-string json-str true)
       (walk/prewalk-demo))

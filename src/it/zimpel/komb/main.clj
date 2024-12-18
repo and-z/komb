@@ -22,10 +22,10 @@
     (if (cli/abort? parsed-args)
       parsed-args
       (try-run
-       (let [sorted (if (some? json)
-                      (core/process-from-file options json)
-                      (core/process-from-input options))]
-         {:json-string (core/stringify sorted options)})))))
+        (let [sorted (if (some? json)
+                       (core/process-from-file options json)
+                       (core/process-from-input options))]
+          {:json-string (core/stringify sorted options)})))))
 
 (comment
 

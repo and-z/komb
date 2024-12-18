@@ -9,6 +9,9 @@
              [clojure.pprint :as pp]
              [it.zimpel.komb.main :as komb])
 
+  format {:doc "Format source code"
+          :task (shell "npx @chrisoakman/standard-clojure-style fix")}
+
   ;; e.g.: bb komb $(find <dir-containing-json-files> | fzf)
   ;; cat test/it/zimpel/komb/unsorted.json | bb komb
   komb {:doc "Sort keys and values of provided file and print it. Use `komb -h` for more help."

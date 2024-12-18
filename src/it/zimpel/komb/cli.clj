@@ -3,7 +3,8 @@
    [clojure.java.io :as io]
    [clojure.string :as str]
    [clojure.tools.cli :as cli])
-  (:import (java.io File)))
+  (:import
+   (java.io File)))
 
 (set! *warn-on-reflection* true)
 
@@ -16,8 +17,8 @@
 
 (defn pr-errors [errors]
   (->> errors
-       (map (partial str "- "))
-       (str/join \newline)))
+    (map (partial str "- "))
+    (str/join \newline)))
 
 (defn error? [{:keys [errors]}]
   (seq errors))
@@ -47,7 +48,7 @@ Arguments:
 (defn valid-json-file [path]
   (let [^File file (io/file path)
         ->error (fn [msg anomaly] {:error {:message msg :path path}
-                                  :anomaly anomaly})]
+                                   :anomaly anomaly})]
     (cond
       (not (.exists file))
       (->error "File not exists" :file/missing)
@@ -82,11 +83,8 @@ Arguments:
       :else result)))
 
 (defn parse-opts [args]
-  (let [result (-> (cli/parse-opts args cli-spec)
-                   (parse-arguments))]
-    #_(when (abort? result)
-      (run! println (usage result)))
-    result))
+  (-> (cli/parse-opts args cli-spec)
+      (parse-arguments)))
 
 (comment
 
@@ -98,5 +96,4 @@ Arguments:
         #_["--no-semantic" "-h"]]
     (parse-opts args))
 
-  \n
-  )
+  \n)

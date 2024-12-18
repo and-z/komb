@@ -1,11 +1,11 @@
 (ns it.zimpel.komb.core-test
   (:require
-   [clojure.test :as t]
-   [clojure.pprint :as pp]
-   [clojure.test :refer [deftest is testing]]
    [cheshire.core :as json]
-   [it.zimpel.komb.core :as sut]
-   [clojure.java.io :as io]))
+   [clojure.java.io :as io]
+   [clojure.pprint :as pp]
+   [clojure.test :as t]
+   [clojure.test :refer [deftest is testing]]
+   [it.zimpel.komb.core :as sut]))
 
 (defn test-file []
   (io/file "test/it/zimpel/komb/unsorted.json"))
