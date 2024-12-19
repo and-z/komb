@@ -1,7 +1,10 @@
 {
     "name": "komb",
     "description": "Sort and tidy up some JSON",
-    "repository": "https://github.com/and-z/komb",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/and-z/komb.git"
+    },
     "author": "Andreas Zimpel",
     "license": "MIT",
     "version": "0.0.1",
