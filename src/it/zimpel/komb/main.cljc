@@ -1,9 +1,8 @@
 (ns it.zimpel.komb.main
   (:require
    [it.zimpel.komb.cli :as cli]
-   [it.zimpel.komb.core :as core]))
-
-(set! *warn-on-reflection* true)
+   [it.zimpel.komb.core :as core]
+   [it.zimpel.komb.io :as io]))
 
 (def exit-codes
   {:ok 0 :nok 1})
@@ -13,7 +12,7 @@
   [body]
   `(try
      ~body
-     (catch Exception e#
+     (catch #?(:clj Exception :cljs js/Error) e#
        {:error e#
         :message (ex-message e#)})))
 
@@ -25,7 +24,7 @@
         (let [sorted (if (some? json)
                        (core/process-from-file options json)
                        (core/process-from-input options))]
-          {:json-string (core/stringify sorted options)})))))
+          {:json-string (io/stringify sorted options)})))))
 
 (comment
 
@@ -40,10 +39,21 @@
       (run! println (cli/usage result))
 
       (some? error)
-      (binding [*out* *err*]
-        (println "Error ocurred:")
-        (println error))
+      #?(:clj
+         (binding [*out* *err*]
+           (println "Error ocurred:")
+           (println error))
+         :cljs
+         (do
+           (println "Error ocurred:")
+           (println error)))
 
       (some? json-string)
       (println json-string))
-    (System/exit (exit-codes (if json-string :ok :nok)))))
+    #?(:clj (System/exit (exit-codes (if json-string :ok :nok)))
+       :cljs (set! (. js/process -exitCode) (exit-codes (if json-string :ok :nok))))))
+
+;; (println "Oops! o_O" *command-line-args*)
+
+#?(:cljs
+   (apply -main (.slice js/process.argv 2)))

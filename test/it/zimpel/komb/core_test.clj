@@ -5,7 +5,8 @@
    [clojure.pprint :as pp]
    [clojure.test :as t]
    [clojure.test :refer [deftest is testing]]
-   [it.zimpel.komb.core :as sut]))
+   [it.zimpel.komb.core :as sut]
+   [it.zimpel.komb.io :as komb.io]))
 
 (defn test-file []
   (io/file "test/it/zimpel/komb/unsorted.json"))
@@ -47,4 +48,4 @@
              (sut/sort-json-str options "[\"b\", \"c\", \"a\"]")))
       (is (= sorted-semantically-json-str
              (-> (sut/process-from-file options (test-file))
-                 (sut/stringify options)))))))
+                 (komb.io/stringify options)))))))
