@@ -25,3 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Provide help via `komb --help`
 - Return proper exit shell code
 - Support bb (native GraalVM) and nbb (Node.js)
+
+[Unreleased]: https://github.com/and-z/komb/compare/v0.0.1...HEAD
+[0.0.1]: https://github.com/and-z/komb/releases/tag/v0.0.1

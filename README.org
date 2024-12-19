@@ -213,7 +213,7 @@ bb test:bb
 #+end_src
 
 ** Startup time
-Here are some numbers (in descencing order) to give an idea of how quick/slow different versions may run.
+Here are some numbers (in descending order) to give an idea of how quick/slow different versions may run.
 The measurements are not scientific and don't pretent to be a valid benchmark.
 I executed different variants of starting `komb` and wrapped the commands with `time` on my linux dev machine.
 
