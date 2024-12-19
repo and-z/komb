@@ -217,14 +217,14 @@ Here are some numbers (in descending order) to give an idea of how quick/slow di
 The measurements are not scientific and don't pretent to be a valid benchmark.
 I executed different variants of starting `komb` and wrapped the commands with `time` on my linux dev machine.
 
-| runtime | note          | cmd                                                                          | time <cmd>                                   |
-|---------+---------------+------------------------------------------------------------------------------+----------------------------------------------|
-| nodejs  | not installed | npx komb test/it/zimpel/komb/unsorted.json                                   | 0,37s user 0,05s system 72% cpu 0,581 total  |
-| nodejs  | not installed | npx nbb -m it.zimpel.komb.main test/it/zimpel/komb/unsorted.json             | 0,27s user 0,08s system 132% cpu 0,262 total |
-| nodejs  | not installed | nbb --classpath src -m it.zimpel.komb.main test/it/zimpel/komb/unsorted.json | 0,15s user 0,02s system 131% cpu 0,127 total |
-| nodejs  | `npm -i komb` | komb test/it/zimpel/komb/unsorted.json                                       | 0,14s user 0,03s system 132% cpu 0,128 total |
-| graalvm | not installed | bb komb test/it/zimpel/komb/unsorted.json                                    | 0,01s user 0,02s system 90% cpu 0,029 total  |
-| graalvm | `bb install`  | komb test/it/zimpel/komb/unsorted.json                                       | 0,01s user 0,03s system 94% cpu 0,040 total  |
+| runtime | note                  | cmd                                                                          | time <cmd>                                   |
+|---------+-----------------------+------------------------------------------------------------------------------+----------------------------------------------|
+| nodejs  | not installed         | npx komb test/it/zimpel/komb/unsorted.json                                   | 0,37s user 0,05s system 72% cpu 0,581 total  |
+| nodejs  | not installed         | npx nbb -m it.zimpel.komb.main test/it/zimpel/komb/unsorted.json             | 0,27s user 0,08s system 132% cpu 0,262 total |
+| nodejs  | not installed         | nbb --classpath src -m it.zimpel.komb.main test/it/zimpel/komb/unsorted.json | 0,15s user 0,02s system 131% cpu 0,127 total |
+| nodejs  | `npm install -g komb` | komb test/it/zimpel/komb/unsorted.json                                       | 0,14s user 0,03s system 132% cpu 0,128 total |
+| graalvm | not installed         | bb komb test/it/zimpel/komb/unsorted.json                                    | 0,01s user 0,02s system 90% cpu 0,029 total  |
+| graalvm | `bb install`          | komb test/it/zimpel/komb/unsorted.json                                       | 0,01s user 0,03s system 94% cpu 0,040 total  |
 
 `not installed` means `komb` is not installed as a tool via `npm install` for Node.js flavor or `bb install` for GraalVM flavor.
 When properly installed there is no performance penalty for dynamic lookup like in case of `npx`.
