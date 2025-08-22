@@ -49,3 +49,12 @@
       (is (= sorted-semantically-json-str
              (-> (sut/process-from-file options (test-file))
                  (komb.io/stringify options)))))))
+
+(deftest sort-agressively
+  (testing "should retain key-value order"
+    (let [options {:semantic? false}
+          json "{\"alias\":\"bb\",\"full-name\":\"Babashka\",\"author\":\"borkdude\",\"unordered-numbers\":[2,5,1,2,9]}"
+          expected "{\"alias\":\"bb\",\"author\":\"borkdude\",\"full-name\":\"Babashka\",\"unordered-numbers\":[1,2,2,5,9]}"]
+      (is (= expected
+             (-> (sut/sort-json-str options json)
+                 (komb.io/stringify options)))))))

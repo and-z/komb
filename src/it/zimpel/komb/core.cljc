@@ -21,6 +21,7 @@
         ;; - heterogeneous values
         (and (sequential? form)
              (sortable? form)
+             (not (map-entry? form))
              (not semantic?))
         (into [] (sort form))
 
