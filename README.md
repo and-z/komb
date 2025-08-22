@@ -7,8 +7,8 @@ It reads JSON content, sorts object keys and (array) values alphanumerically and
 
 - Sorts nested JSON objects and arrays
 - Reads JSON from a file or from `stdin`
-- Optional semantic sort preserves order of array elements
-- Optional pretty-printing
+- Semantic sort preserves order of array elements, can be disabled
+- Pretty-printing, can be disabled
 - Runs locally/offline by Node.js or GraalVM
 - Returns bash exit code on success/error
 
