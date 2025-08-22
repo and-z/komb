@@ -36,3 +36,16 @@
 
 (defn process-from-input [options]
   (sort-json-str options (io/stdio->str)))
+
+(comment
+
+  (let [json
+        "{\"alias\": \"bb\",
+  \"full-name\": \"Babashka\",
+  \"author\": \"borkdude\",
+  \"unordered-numbers\": [2, 5, 1, 2 , 9]
+}"]
+    (sort-json-str {:semantic? true} json))
+  (map-entry?)
+
+  :-)
