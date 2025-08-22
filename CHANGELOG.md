@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [0.0.2] - 2025-22-08
+
+### Fixed
+- Flipped key-value when agressively sorting using npx, #1
+
+
 ## [0.0.1] - 2024-12-08
 
 ### Added
@@ -26,5 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Return proper exit shell code
 - Support bb (native GraalVM) and nbb (Node.js)
 
-[Unreleased]: https://github.com/and-z/komb/compare/v0.0.1...HEAD
+[Unreleased]: https://github.com/and-z/komb/compare/v0.0.2...HEAD
+[0.0.2]: https://github.com/and-z/komb/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/and-z/komb/releases/tag/v0.0.1
